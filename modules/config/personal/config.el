@@ -26,6 +26,14 @@
   :config
   (add-hook! (clojure-mode emacs-lisp-mode) #'evil-cleverparens-mode))
 
+(def-package! persistent-scratch
+  :hook (doom-init . persistent-scratch-setup-default)
+  :init
+  (setq persistent-scratch-save-file (concat doom-cache-dir ".persistent-scratch")))
+
+
+(set! :evil-state 'process-menu-mode 'emacs)
+
 ;; mappings
 (map!
  :i "A-/"    #'+company/complete
@@ -46,7 +54,25 @@
 
    :map ivy-minibuffer-map
    [escape] #'keyboard-escape-quit
+   "A->" #'end-of-buffer
+   "A-<" #'beginning-of-buffer
    "M-O"  #'ivy-call-and-recenter
    "M-z"    #'undo
    "A-v"    #'ivy-scroll-down-command
-   "C-v"    #'ivy-scroll-up-command))
+   "C-v"    #'ivy-scroll-up-command)
+ (:after ibuffer
+   (:leader
+     (:prefix "b"
+       :desc "IBuffer" :nv "i" #'ibuffer-jump
+       :desc "Counsel IBuffer" :nv "I" #'counsel-ibuffer)))
+ (:after company-box
+   (:map company-box-mode-map
+     :i "C-k" #'company-box--prev-line)))
+
+;;Tweaks
+;;
+;; disable recentf cleaning up message
+(after! recentf
+  (defun *recentf-cleanup (orig-fn &rest args)
+    (quiet! (apply orig-fn args)))
+  (advice-add #'recentf-cleanup :around #'*recentf-cleanup))

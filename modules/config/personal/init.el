@@ -3,19 +3,23 @@
 ;;theme
 (setq doom-theme 'doom-molokai)
 
+
+(setq doom-scratch-buffer-major-mode t)
+
 ;;font settings
-(set-face-attribute 'default nil :font
-                    (format   "%s:pixelsize=%d"  "Iosevka" 15))
+(when (display-graphic-p)
+  (set-face-attribute 'default nil :font
+                      (format   "%s:pixelsize=%d"  "Iosevka" 15))
 
-(dolist (charset '(kana han cjk-misc bopomofo))
-  (set-fontset-font (frame-parameter nil 'font) charset
-                    (font-spec :family "PingFang SC" :size 15)))
+  (dolist (charset '(kana han cjk-misc bopomofo))
+    (set-fontset-font (frame-parameter nil 'font) charset
+                      (font-spec :family "PingFang SC" :size 15)))
 
-;; Use the OS X Emoji font for Emoticons
-(when (fboundp 'set-fontset-font)
-  (set-fontset-font "fontset-default"
-                    '(#x1F600 . #x1F64F)
-                    (font-spec :name "Apple Color Emoji") nil 'prepend))
+  ;; Use the OS X Emoji font for Emoticons
+  (when (fboundp 'set-fontset-font)
+    (set-fontset-font "fontset-default"
+                      '(#x1F600 . #x1F64F)
+                      (font-spec :name "Apple Color Emoji") nil 'prepend)))
 
 (setq doom-font (font-spec :family "Iosevka" :size 15)
       doom-variable-pitch-font (font-spec :family "SF Pro Text")
@@ -29,5 +33,3 @@
 
 (after! neotree
  (setq neo-show-hidden-files nil))
-
-
