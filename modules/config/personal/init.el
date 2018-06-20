@@ -33,3 +33,8 @@
 
 (after! neotree
  (setq neo-show-hidden-files nil))
+
+
+
+;; BUG, showing icons
+;;(setq +pretty-code-iosevka-ligatures-enabled-by-default t)
