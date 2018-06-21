@@ -21,7 +21,8 @@
 
 (after! evil
   ;; http://spacemacs.org/doc/FAQ#prevent-the-visual-selection-overriding-my-system-clipboard
-  (fset 'evil-visual-update-x-selection 'ignore))
+  (fset 'evil-visual-update-x-selection 'ignore)
+  (evil-ex-define-cmd "buffers" 'ibuffer))
 
 (after! ivy
   (setq ivy-use-selectable-prompt t))
@@ -32,6 +33,11 @@
 ;; packages
 (def-package! help-fns+
   :commands (describe-keymap))
+
+(def-package! launchctl
+  :commands (launchctl)
+  :config
+  (set-evil-initial-state! 'launchctl-mode 'emacs))
 
 (def-package! evil-cleverparens
   :init
@@ -44,8 +50,42 @@
   :init
   (setq persistent-scratch-save-file (concat doom-cache-dir ".persistent-scratch")))
 
+(def-package! ibuffer-vc
+  :defer t
+  :init
+  (after! ibuffer
+    (define-ibuffer-column size-h
+      (:name "Size"
+             :inline t
+             :summarizer
+             (lambda (column-strings)
+               (let ((total 0))
+                 (dolist (string column-strings)
+                   (setq total
+                         ;; like, ewww ...
+                         (+
+                          (let ((number (float (string-to-number string))))
+                            (cond
+                             ((string-match-p "K" string)
+                              (* number 1000))
+                             ((string-match-p "M" string)
+                              (* number 1000000))
+                             (t number)))
+                          total)))
+                 (file-size-human-readable total 'si))))
+      (file-size-human-readable (buffer-size) 'si))
+    (setq ibuffer-formats
+          '((mark modified vc-status-mini read-only
+                  " " (name 25 25 :left :elide)
+                  " " (size-h 9 -1 :right)
+                  " " (mode 16 16 :left :elide)
 
-(set! :evil-state 'process-menu-mode 'emacs)
+                  " " filename-and-process)
+            (mark " " (name 30 -1)
+                  " " filename)))
+    (add-hook 'ibuffer-hook 'ibuffer-vc-set-filter-groups-by-vc-root)))
+
+(set-evil-initial-state! 'process-menu-mode 'emacs)
 
 ;; mappings
 (map!
