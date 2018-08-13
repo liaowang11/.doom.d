@@ -11,6 +11,8 @@
         (setq insert-directory-program gls
               dired-listing-switches "-aBhl --group-directories-first")))))
 
+(push '("\\.sc" . scala-mode) auto-mode-alist)
+
 (add-hook! 'doom-init-hook #'personal|osx-gls)
 
 (after! magit
@@ -22,13 +24,19 @@
 (after! evil
   ;; http://spacemacs.org/doc/FAQ#prevent-the-visual-selection-overriding-my-system-clipboard
   (fset 'evil-visual-update-x-selection 'ignore)
-  (evil-ex-define-cmd "buffers" 'ibuffer))
+  (evil-ex-define-cmd "buffers" 'ibuffer)
+  ;;(setq x-select-enable-clipboard t)
+  )
 
 (after! ivy
   (setq ivy-use-selectable-prompt t))
 
 (after! org
   (setq +org-dir (expand-file-name "~/Documents/orgs")))
+
+(after! projectile
+  (setq projectile-require-project-root t))
+
 
 ;; packages
 (def-package! help-fns+
@@ -46,9 +54,28 @@
   (add-hook! (clojure-mode emacs-lisp-mode) #'evil-cleverparens-mode))
 
 (def-package! persistent-scratch
-  :hook (doom-init . persistent-scratch-setup-default)
+  :hook (doom-post-init . persistent-scratch-setup-default)
   :init
   (setq persistent-scratch-save-file (concat doom-cache-dir ".persistent-scratch")))
+
+(def-package! org-journal
+  :defer t
+  :commands (org-journal-new-entry org-journal-search-forever)
+  :init
+  (setq org-journal-dir "~/Documents/orgs/journal/"
+        org-journal-carryover-items nil
+        org-journal-find-file 'find-file)
+  :config
+  (map! :map org-journal-mode-map
+        :localleader
+        :n "n" #'org-journal-open-next-entry
+        :n "p" #'org-journal-open-previous-entry))
+
+(def-package! cheat-sh
+  :defer t
+  :commands (cheat-sh cheat-sh-region cheat-sh-search cheat-sh-list cheat-sh-search-topic)
+  :config
+  (set-popup-rule! "^\\*cheat.sh" :size 0.4 :quit 'current :select t))
 
 (def-package! ibuffer-vc
   :defer t
@@ -117,10 +144,6 @@
      :n "SPC" nil))
 
  (:after ivy
-   (:leader
-     (:prefix "/"
-       :desc "Last Search" :nv "/" #'ivy-resume))
-
    :map ivy-minibuffer-map
    [escape] #'keyboard-escape-quit
    "A->"    #'end-of-buffer
@@ -140,10 +163,10 @@
    (:map company-box-mode-map
      :i "C-k" #'company-box--prev-line))
 
+ ;;TODO: merge in "gs"
  (:prefix "go"
    :nv "c" #'avy-goto-char
    :nv "C" #'avy-goto-char-2
-   :nv "o" #'avy-goto-char-timer
    :nv "w" #'avy-goto-word-1
    :nv "W" #'avy-goto-word-0
    :nv "l" #'avy-goto-line

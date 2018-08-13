@@ -7,5 +7,7 @@
 (package! link-hint)
 (package! ibuffer-vc)
 (package! launchctl)
+(package! org-journal)
+(package! cheat-sh)
 ;;launchctrl
 

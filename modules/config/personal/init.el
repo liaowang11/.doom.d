@@ -23,8 +23,8 @@
 
 (setq doom-font (font-spec :family "Iosevka" :size 15)
       doom-variable-pitch-font (font-spec :family "SF Pro Text")
-      doom-unicode-font (font-spec :family "PingFang SC")
-      doom-big-font (font-spec :family "Iosevka" :size 19))
+;;      doom-unicode-font (font-spec :family "PingFang SC")
+      doom-big-font (font-spec :family "Iosevka" :size 25))
 
 (after! evil
   (setq evil-move-beyond-eol t)
