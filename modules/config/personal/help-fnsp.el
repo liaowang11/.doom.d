@@ -1,6 +1,6 @@
-;;; help-fns+.el --- Extensions to `help-fns.el'.
+;;; help-fnsp.el --- Extensions to `help-fns.el'.
 ;;
-;; Filename: help-fns+.el
+;; Filename: help-fnsp.el
 ;; Description: Extensions to `help-fns.el'.
 ;; Author: Drew Adams
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
@@ -3032,7 +3032,7 @@ Non-interactively:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(provide 'help-fns+)
+(provide 'help-fnsp)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; help-fns+.el ends here
+;;; help-fnsp.el ends here

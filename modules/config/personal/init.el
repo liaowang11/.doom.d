@@ -38,3 +38,5 @@
 
 ;; BUG, showing icons
 ;;(setq +pretty-code-iosevka-ligatures-enabled-by-default t)
+
+(setq company-selection-wrap-around t)

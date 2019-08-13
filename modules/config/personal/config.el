@@ -31,27 +31,21 @@
 (after! ivy
   (setq ivy-use-selectable-prompt t))
 
-(after! org
-  (setq +org-dir (expand-file-name "~/Documents/orgs")))
-
 (after! projectile
   (setq projectile-require-project-root t))
 
 
 ;; packages
-(def-package! help-fns+
-  :commands (describe-keymap))
-
 (def-package! launchctl
   :commands (launchctl)
   :config
   (set-evil-initial-state! 'launchctl-mode 'emacs))
 
-(def-package! evil-cleverparens
-  :init
-  (setq evil-cleverparens-use-regular-insert t)
-  :config
-  (add-hook! (clojure-mode emacs-lisp-mode) #'evil-cleverparens-mode))
+;; (def-package! evil-cleverparens
+;;   :init
+;;   (setq evil-cleverparens-use-regular-insert t)
+;;   :config
+;;   (add-hook! (clojure-mode emacs-lisp-mode) #'evil-cleverparens-mode))
 
 (def-package! persistent-scratch
   :hook (doom-post-init . persistent-scratch-setup-default)
@@ -62,9 +56,9 @@
   :defer t
   :commands (org-journal-new-entry org-journal-search-forever)
   :init
-  (setq org-journal-dir "~/Documents/orgs/journal/"
-        org-journal-carryover-items nil
-        org-journal-find-file 'find-file)
+  (setq org-journal-dir "~/Dropbox (Personal)/orgs/journal/"
+        org-journal-find-file 'find-file
+        org-journal-carryover-items "TODO=\"TODO\"|TODO=\"[ ]\"")
   :config
   (map! :map org-journal-mode-map
         :localleader
@@ -112,67 +106,51 @@
                   " " filename)))
     (add-hook 'ibuffer-hook 'ibuffer-vc-set-filter-groups-by-vc-root)))
 
-(set-evil-initial-state! 'process-menu-mode 'emacs)
+(def-package! ammonite-term-repl
+  :defer t
+  :commands (run-ammonite))
 
 ;; mappings
 (map!
- :i "A-/"    #'+company/complete
+ :i "M-/"    #'+company/complete
+ :i "M-?"    #'dabbrev-expand
 
-
- (:leader
-   (:prefix "b"
-     :desc "Switch to Scratch Buffer" :n "S" #'doom/switch-to-scratch-buffer
-     :desc "Create Sratch Buffer" :n "N" #'doom/create-scratch-buffer)
-   (:prefix "o"
-     :desc "Treemacs" :n "n" #'+treemacs/toggle
-     :desc "Treemacs: find file" :n "N" #'treemacs-find-file))
-
- (:after evil-cleverparens
-   (:map evil-cleverparens-mode-map
-     :n "]" nil
-     :n "[" nil))
+ ;; (:after evil-cleverparens
+ ;;   (:map evil-cleverparens-mode-map
+ ;;     :n "]" nil
+ ;;     :n "[" nil))
 
  (:after counsel
    (:leader
      (:prefix "f"
        :desc "Locate" :n "L" #'counsel-locate))
    (:map counsel-ag-map
-     "M-RET" #'ivy-call-and-recenter))
-
- (:after dired
-   (:map dired-mode-map
-     :n "SPC" nil))
+     [s-return] #'ivy-call-and-recenter))
 
  (:after ivy
    :map ivy-minibuffer-map
-   [escape] #'keyboard-escape-quit
-   "A->"    #'end-of-buffer
-   "A-<"    #'beginning-of-buffer
-   "M-O"    #'ivy-call-and-recenter
-   "M-z"    #'undo
-   "A-v"    #'ivy-scroll-down-command
-   "C-v"    #'ivy-scroll-up-command
-   "C-h"    (kbd "DEL"))
+   [s-return]    #'ivy-call-and-recenter
+   "C-v" #'ivy-scroll-up-command)
+
  (:after ibuffer
    (:leader
      (:prefix "b"
        :desc "IBuffer" :nv "i" #'ibuffer-jump
        :desc "Counsel IBuffer" :nv "I" #'counsel-ibuffer)))
 
- (:after company-box
-   (:map company-box-mode-map
-     :i "C-k" #'company-box--prev-line))
+ (:leader
+   :prefix "o"
+   :desc "Org Journal" :nv "j" #'org-journal-new-entry)
 
- ;;TODO: merge in "gs"
- (:prefix "go"
-   :nv "c" #'avy-goto-char
-   :nv "C" #'avy-goto-char-2
-   :nv "w" #'avy-goto-word-1
-   :nv "W" #'avy-goto-word-0
-   :nv "l" #'avy-goto-line
-   :nv "s" #'avy-isearch
-   :nv "u" #'link-hint-open-link
-   :nv "U" #'link-hint-copy-link))
+ (:after evil-easymotion
+   :map evilem-map
+   "c" #'avy-goto-char
+   "C" #'avy-goto-char-2
+   "d" #'avy-goto-word-1
+   "D" #'avy-goto-word-0
+   "l" #'avy-goto-line
+   "u" #'link-hint-open-link
+   "U" #'link-hint-copy-link))
 
 ;;Tweaks
 ;;
@@ -181,3 +159,9 @@
   (defun *recentf-cleanup (orig-fn &rest args)
     (quiet! (apply orig-fn args)))
   (advice-add #'recentf-cleanup :around #'*recentf-cleanup))
+
+(after! org-mode
+  (add-to-list 'org-link-abbrev-alist '("nor" . "https://n.alibaba-inc.com/ops/info/host?host=%s")))
+
+(after! dash-docs
+  (setq dash-docs-docsets-path (expand-file-name "~/Library/Application Support/Dash/DocSets")))
